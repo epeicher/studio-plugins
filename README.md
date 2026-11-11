@@ -7,6 +7,7 @@ Small WordPress plugins for sites running in [WordPress Studio](https://develope
 | Plugin | What it does |
 | --- | --- |
 | [jurassic-tube](jurassic-tube/README.md) | Lets a Studio site answer on its Jurassic Tube domain instead of redirecting to `localhost:<port>`, and reports that domain to Jetpack. |
+| [wp-env-jurassic-tube](wp-env-jurassic-tube/README.md) | The same redirect fix for a `wp-env` site, mounted through a `.wp-env.override.json` mapping instead of a symlink. |
 
 ## Layout
 
