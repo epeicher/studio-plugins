@@ -20,6 +20,8 @@ Requests on `localhost:<port>` or a Studio `.local` domain are left alone. No pe
 
 Jetpack reads the raw `WP_HOME` / `WP_SITEURL` constants instead of the filtered home and site URL, so it reports `http://localhost:<port>` to WordPress.com and the connection is refused with `siteurl_private_ip`. The plugin gives Jetpack the tunnel URL through the `jetpack_sync_home_url` and `jetpack_sync_site_url` filters.
 
+Studio also sets `WP_ENVIRONMENT_TYPE` to `local`, which makes Jetpack treat the site as local and switch to Offline Mode, where it cannot connect. Once a tunnel URL is known, the plugin answers `false` on the `jetpack_is_local_site` filter, so no `JETPACK_DEV_DEBUG` line is needed in `wp-config.php`. If that constant (or `WP_LOCAL_DEV`) is defined, it still wins.
+
 The last tunnel URL seen is stored in the `studio_jt_public_url` option. Requests that arrive on localhost (WP-Cron, WP-CLI) then report the same URL to Jetpack, which keeps it out of safe mode. Load the site once on its tunnel domain before connecting Jetpack so the option is set, and use the tunnel domain for wp-admin while Jetpack is connected.
 
 To accept another tunnel domain, add its suffix to `$studio_jt_suffixes` at the top of `jurassic-tube.php`.

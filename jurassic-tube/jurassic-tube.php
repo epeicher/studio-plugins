@@ -43,6 +43,18 @@ $studio_jt_jetpack_url = static function ( $url ) use ( $studio_jt_public ) {
 add_filter( 'jetpack_sync_home_url', $studio_jt_jetpack_url, 20 );
 add_filter( 'jetpack_sync_site_url', $studio_jt_jetpack_url, 20 );
 
+// Studio sets WP_ENVIRONMENT_TYPE to "local", so Jetpack treats the site as
+// local and switches to Offline Mode, where it cannot connect. Once the site
+// has a public tunnel URL it is no longer local. A JETPACK_DEV_DEBUG or
+// WP_LOCAL_DEV constant in wp-config.php still takes precedence over this.
+add_filter(
+	'jetpack_is_local_site',
+	static function ( $is_local ) use ( $studio_jt_public ) {
+		return ( $studio_jt_public || get_option( 'studio_jt_public_url' ) ) ? false : $is_local;
+	},
+	20
+);
+
 if ( $studio_jt_is_tunnel ) {
 	// The tunnel and the local Caddy proxy both terminate HTTPS.
 	$_SERVER['HTTPS'] = 'on';
