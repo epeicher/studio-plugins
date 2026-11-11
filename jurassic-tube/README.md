@@ -16,6 +16,12 @@ When a request arrives on a host ending in `.jurassic.tube`, the plugin:
 
 Requests on `localhost:<port>` or a Studio `.local` domain are left alone. No per-site configuration is needed: the host comes from the request.
 
+### Jetpack
+
+Jetpack reads the raw `WP_HOME` / `WP_SITEURL` constants instead of the filtered home and site URL, so it reports `http://localhost:<port>` to WordPress.com and the connection is refused with `siteurl_private_ip`. The plugin gives Jetpack the tunnel URL through the `jetpack_sync_home_url` and `jetpack_sync_site_url` filters.
+
+The last tunnel URL seen is stored in the `studio_jt_public_url` option. Requests that arrive on localhost (WP-Cron, WP-CLI) then report the same URL to Jetpack, which keeps it out of safe mode. Load the site once on its tunnel domain before connecting Jetpack so the option is set, and use the tunnel domain for wp-admin while Jetpack is connected.
+
 To accept another tunnel domain, add its suffix to `$studio_jt_suffixes` at the top of `jurassic-tube.php`.
 
 ## Install on a site
@@ -54,4 +60,5 @@ Steps 2 and 4 are an optional local speed-up; the tunnel alone also works.
 ## Limits
 
 - URLs that a plugin or theme builds straight from the `WP_CONTENT_URL` or `WP_PLUGIN_URL` constants, without WordPress's URL functions, are not rewritten. If you hit one, define `WP_CONTENT_URL` for the tunnel host in the site's `wp-config.php`.
+- If the tunnel subdomain changes, load the site on the new domain once so `studio_jt_public_url` is updated. A site already connected to Jetpack under the old domain will see a URL mismatch.
 - This is a workaround. The proper fix belongs in Studio's `getSiteUrlPrependContent` (`apps/cli/lib/native-php/site-setup.ts`).
